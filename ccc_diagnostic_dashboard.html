@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="color-scheme" content="dark">
+<title>CCC Homelessness Strategic Plan — System Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,400;1,500&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/*
+  ACCESSIBLE COLOR SYSTEM — Paul Tol colorblind-safe palette
+  No meaning conveyed by red/green distinction alone.
+  WCAG AA compliant contrast ratios throughout.
+*/
+:root{
+  --bg:#0a0f1e;--bg2:#0d1526;--bg3:#111d35;
+  --p:rgba(255,255,255,.04);--ph:rgba(255,255,255,.08);
+  --l:rgba(255,255,255,.10);--lh:rgba(255,255,255,.20);
+  --t:#eef4ff;--m:#b0bdd6;--d:#6a7a9a;
+  --c:#56B4E9;   /* sky blue — primary */
+  --v:#0072B2;   /* deep blue — secondary */
+  --a:#E69F00;   /* amber — alert/caution */
+  --g:#009E73;   /* teal-green — positive */
+  --pk:#CC79A7;  /* rose-mauve — tertiary */
+  --y:#F0E442;   /* yellow — focus/high emphasis */
+  --df:'Fraunces',Georgia,serif;
+  --bd:'Inter Tight',system-ui,sans-serif;
+  --mn:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:var(--bd);color:var(--t);background:linear-gradient(160deg,#0a0f1e 0%,#0d1a2e 100%);background-attachment:fixed;min-height:100vh;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+a{color:var(--c);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:3px solid var(--y);outline-offset:3px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* SKIP NAV */
+.skip{position:absolute;top:-100px;left:0;background:var(--y);color:var(--bg);padding:10px 18px;font-weight:700;font-size:14px;text-decoration:none;z-index:200;border-radius:0 0 8px 0;transition:top .15s}
+.skip:focus{top:0}
+
+/* TOPBAR */
+.tb{position:sticky;top:0;z-index:50;background:rgba(10,15,30,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--l)}
+.tbi{max-width:1300px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:10px}
+.lgicon{width:32px;height:32px;border-radius:8px;background:var(--v);display:grid;place-items:center;flex-shrink:0}
+.lgicon svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lgtext{display:flex;flex-direction:column;line-height:1.2}
+.lgtext strong{font-family:var(--df);font-weight:700;font-size:15px;letter-spacing:-.01em}
+.lgtext span{font-size:11px;color:var(--d);font-family:var(--mn);letter-spacing:.04em}
+.div{width:1px;height:28px;background:var(--l)}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap}
+nav.tabs button{color:var(--m);padding:7px 13px;border-radius:10px;font-size:13px;font-weight:500;transition:.15s;display:flex;align-items:center;gap:7px}
+nav.tabs button:hover{color:var(--t);background:var(--p)}
+nav.tabs button.on{color:var(--t);background:var(--ph)}
+nav.tabs .dot{width:5px;height:5px;border-radius:50%;background:var(--d)}
+nav.tabs button.on .dot{background:var(--c)}
+.badge-sample{margin-left:auto;display:flex;align-items:center;gap:7px;padding:5px 11px;background:rgba(230,159,0,.1);border:1px solid rgba(230,159,0,.25);border-radius:999px;font-family:var(--mn);font-size:11px;color:#ffd77a;letter-spacing:.04em;white-space:nowrap}
+
+/* LAYOUT */
+.ap{max-width:1300px;margin:0 auto;padding:28px 22px 80px}
+.vw{display:none}
+.vw.on{display:block;animation:fd .3s ease}
+@keyframes fd{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* PAGE HEADERS */
+.ph{margin-bottom:28px}
+.ph .eyebrow{font-family:var(--mn);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--c);margin-bottom:10px}
+.ph h1{font-family:var(--df);font-weight:500;font-style:italic;font-size:40px;line-height:1.05;letter-spacing:-.03em;margin-bottom:10px}
+.ph h1 strong{font-style:normal;font-weight:700}
+.ph p{color:var(--m);max-width:680px;font-size:15px}
+.ph .meta{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-family:var(--mn);font-size:11px;border:1px solid var(--l);color:var(--m)}
+.pill .dot2{width:6px;height:6px;border-radius:50%}
+.dot-g{background:var(--g)}.dot-a{background:var(--a)}.dot-c{background:var(--c)}
+
+/* PANELS */
+.card{background:var(--p);border:1px solid var(--l);border-radius:18px;padding:22px;backdrop-filter:blur(4px)}
+.card-accent{border-left:3px solid var(--c)}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g-main{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.mt{margin-top:18px}
+.mb{margin-bottom:18px}
+.sep{height:1px;background:var(--l);margin:20px 0}
+
+/* STAT CARDS */
+.stat{padding:20px 22px}
+.stat .label{font-size:12px;color:var(--m);margin-bottom:6px;font-weight:500}
+.stat .val{font-family:var(--df);font-size:38px;font-weight:700;line-height:1;letter-spacing:-.04em}
+.stat .sub{font-family:var(--mn);font-size:11px;color:var(--d);margin-top:5px}
+.stat .trend{font-family:var(--mn);font-size:11px;margin-top:4px}
+.trend-warn{color:#ffd77a}.trend-ok{color:var(--g)}
+
+/* SECTION HEADINGS */
+.sh{font-family:var(--df);font-weight:700;font-size:20px;letter-spacing:-.02em;margin-bottom:14px}
+.sh em{color:var(--c);font-style:italic;font-weight:500}
+.eyebrow2{font-family:var(--mn);font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--d);margin-bottom:8px}
+
+/* GAP COMPARISON TABLE */
+.gtable{width:100%;border-collapse:collapse;font-size:13px}
+.gtable th{text-align:left;padding:10px 14px;background:rgba(255,255,255,.04);color:var(--d);font-family:var(--mn);font-size:10px;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--l)}
+.gtable td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;line-height:1.5}
+.gtable tr:last-child td{border:0}
+.gtable td:first-child{color:var(--t);font-weight:500}
+.gtable td.miss{color:var(--d);font-style:italic}
+.gtable td.see{color:#b8e8c4}
+.chk{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;flex-shrink:0;margin-right:6px}
+.chk-n{background:rgba(204,121,167,.15);color:#e8b4d6}
+.chk-y{background:rgba(0,158,115,.15);color:var(--g)}
+
+/* SIGNAL FEED */
+.signal{padding:16px 18px;background:var(--p);border:1px solid var(--l);border-radius:14px;margin-bottom:10px;transition:.15s}
+.signal:hover{border-color:var(--lh)}
+.signal.flag{border-left:3px solid var(--a)}
+.sig-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sig-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.av1{background:linear-gradient(135deg,var(--c),var(--v))}
+.av2{background:linear-gradient(135deg,var(--g),var(--c))}
+.av3{background:linear-gradient(135deg,var(--a),var(--pk))}
+.av4{background:linear-gradient(135deg,var(--v),var(--pk))}
+.av5{background:linear-gradient(135deg,var(--pk),var(--a))}
+.sig-meta{flex:1;min-width:0}
+.sig-meta .who{font-size:13px;font-weight:600}
+.sig-meta .where{font-size:11px;color:var(--d);font-family:var(--mn)}
+.sig-body{font-size:13px;color:#dde8ff;line-height:1.6;margin-bottom:10px}
+.sig-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--mn);font-size:10px;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em}
+.tag-loc{background:rgba(86,180,233,.12);color:#a8d9f5}
+.tag-bar{background:rgba(230,159,0,.12);color:#ffd77a}
+.tag-sys{background:rgba(204,121,167,.12);color:#e8b4d6}
+.tag-svc{background:rgba(0,158,115,.12);color:#5de8c8}
+.tag-disp{background:rgba(0,114,178,.12);color:#7ec8f5}
+
+/* BAR ROWS */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-label{font-size:12px;color:var(--m);width:180px;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;border-radius:999px}
+.bar-val{font-family:var(--mn);font-size:11px;color:var(--d);width:36px;text-align:right}
+
+/* TRACKER */
+.track-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--p);border:1px solid var(--l);border-radius:13px;margin-bottom:10px;transition:.15s}
+.track-item:hover{border-color:var(--lh)}
+.tn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.tn-done{background:rgba(0,158,115,.15);color:var(--g)}
+.tn-act{background:rgba(86,180,233,.15);color:var(--c)}
+.tn-pend{background:rgba(230,159,0,.15);color:#ffd77a}
+.tn-gap{background:rgba(204,121,167,.15);color:#e8b4d6}
+.track-body{flex:1}
+.track-body .tt{font-size:13px;font-weight:600;margin-bottom:3px}
+.track-body .ts{font-size:12px;color:var(--m);line-height:1.5}
+.tc{font-family:var(--mn);font-size:10px;padding:3px 9px;border-radius:999px;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.tc-done{background:rgba(0,158,115,.1);color:var(--g)}
+.tc-act{background:rgba(86,180,233,.1);color:var(--c)}
+.tc-pend{background:rgba(230,159,0,.1);color:#ffd77a}
+.tc-gap{background:rgba(204,121,167,.1);color:#e8b4d6}
+
+/* QUOTE BLOCKS */
+.qblock{padding:16px 18px;border-left:3px solid var(--c);background:rgba(86,180,233,.05);border-radius:0 12px 12px 0;margin-bottom:12px}
+.qblock p{font-style:italic;font-size:13px;color:#dde8ff;line-height:1.7}
+.qblock .qmeta{font-family:var(--mn);font-size:10px;color:var(--d);margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ABOUT / FOOTER */
+.about-footer{margin-top:40px;padding:20px 22px;background:var(--p);border:1px solid var(--l);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.about-footer p{font-size:12px;color:var(--d);line-height:1.6}
+.about-footer a{color:var(--m)}
+.dd-badge{font-family:var(--mn);font-size:10px;color:var(--d);letter-spacing:.08em;border:1px solid var(--l);padding:5px 10px;border-radius:6px}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.g4{grid-template-columns:1fr 1fr}.g-main{grid-template-columns:1fr}}
+@media(max-width:768px){.g2,.g3,.g4,.g-main{grid-template-columns:1fr}.ap{padding:16px 14px 80px}.ph h1{font-size:30px}.tbi{padding:10px 14px;gap:10px}}
+@media(max-width:480px){.ph h1{font-size:24px}.stat .val{font-size:30px}.badge-sample{display:none}}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip">Skip to main content</a>
+
+<div class="tb" role="banner">
+  <div class="tbi">
+    <div class="lg">
+      <div class="lgicon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1l2.1-2.1M17 7l2.1-2.1"/></svg>
+      </div>
+      <div class="lgtext">
+        <strong>System Diagnostic</strong>
+        <span>CCC Homelessness Strategic Plan</span>
+      </div>
+    </div>
+    <div class="div" aria-hidden="true"></div>
+    <nav class="tabs" aria-label="Dashboard sections" role="navigation">
+      <button class="on" onclick="show('overview')" role="tab" aria-selected="true"><span class="dot" aria-hidden="true"></span>Overview</button>
+      <button onclick="show('gap')" role="tab" aria-selected="false"><span class="dot" aria-hidden="true"></span>Gap Analysis</button>
+      <button onclick="show('signals')" role="tab" aria-selected="false"><span class="dot" aria-hidden="true"></span>Live Signals</button>
+      <button onclick="show('system')" role="tab" aria-selected="false"><span class="dot" aria-hidden="true"></span>System Map</button>
+      <button onclick="show('about')" role="tab" aria-selected="false"><span class="dot" aria-hidden="true"></span>About</button>
+    </nav>
+    <div class="badge-sample" aria-label="Sample data — not yet live">⚠ Sample data</div>
+  </div>
+</div>
+
+<div class="ap" id="main">
+
+<!-- ══════════════════════════════════════════════
+     OVERVIEW
+══════════════════════════════════════════════ -->
+<div id="overview" class="vw on" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Contra Costa County · Homelessness Strategic Plan</div>
+    <h1>How well is the <strong>service system</strong> actually working?</h1>
+    <p>People currently moving through the homelessness system are the best real-time test of how that system performs. This tool captures what HMIS records and the Point-in-Time count can't see — the experience behind the data.</p>
+    <div class="meta">
+      <span class="pill"><span class="dot2 dot-a"></span> Sample data — tool in development</span>
+      <span class="pill"><span class="dot2 dot-c"></span> Outreach worker collected</span>
+      <span class="pill"><span class="dot2 dot-g"></span> Tue / Thu deployment</span>
+    </div>
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="g4 mb">
+    <div class="card stat">
+      <div class="label">Interactions logged</div>
+      <div class="val">—</div>
+      <div class="sub">Tool launches [Month] 2026</div>
+    </div>
+    <div class="card stat">
+      <div class="label">Invisible to HMIS</div>
+      <div class="val" style="color:var(--a)">—</div>
+      <div class="sub">Doubled-up / vehicle / motel</div>
+      <div class="trend trend-warn">Not counted in PIT</div>
+    </div>
+    <div class="card stat">
+      <div class="label">Prior system contact</div>
+      <div class="val" style="color:var(--c)">—</div>
+      <div class="sub">Tried and left or turned away</div>
+      <div class="trend trend-warn">System recorded; experience wasn't</div>
+    </div>
+    <div class="card stat">
+      <div class="label">Services provided today</div>
+      <div class="val" style="color:var(--g)">—</div>
+      <div class="sub">At point of outreach contact</div>
+      <div class="trend trend-ok">What met the need in the moment</div>
+    </div>
+  </div>
+
+  <!-- WHY THIS EXISTS -->
+  <div class="g-main">
+    <div>
+      <div class="card mb">
+        <div class="eyebrow2">The gap we're measuring</div>
+        <div class="sh">What official data <em>doesn't capture</em></div>
+        <p style="font-size:14px;color:var(--m);margin-bottom:18px;line-height:1.7">HMIS is a contact management system — it records touchpoints with the service system. The Point-in-Time count is a single-night snapshot in January. Together they show the system's activity. Neither shows the experience of the person moving through it.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="padding:14px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:12px">
+            <div style="font-family:var(--mn);font-size:10px;color:#ffd77a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">HMIS misses</div>
+            <ul style="font-size:12px;color:var(--m);line-height:1.8;padding-left:14px">
+              <li>People not yet in the system</li>
+              <li>What happened after a referral</li>
+              <li>Why someone left or disengaged</li>
+              <li>Barriers at point of service</li>
+              <li>Lived experience of navigation</li>
+            </ul>
+          </div>
+          <div style="padding:14px;background:rgba(204,121,167,.06);border:1px solid rgba(204,121,167,.15);border-radius:12px">
+            <div style="font-family:var(--mn);font-size:10px;color:#e8b4d6;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">PIT count misses</div>
+            <ul style="font-size:12px;color:var(--m);line-height:1.8;padding-left:14px">
+              <li>Doubled-up / couch surfing</li>
+              <li>People in motels</li>
+              <li>Those hiding or avoiding contact</li>
+              <li>Seasonal and weather variation</li>
+              <li>Post-sweep displacement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow2">The diagnostic approach</div>
+        <div class="sh">Lived experience as <em>system testing</em></div>
+        <p style="font-size:14px;color:var(--m);line-height:1.7;margin-bottom:16px">Outreach workers on Tuesday and Thursday runs — providing medical care, navigation, showers, food — are already in direct contact with the people the official counts miss. This tool turns those interactions into structured data that maps the gap between what the system thinks it's doing and what people are actually experiencing.</p>
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(86,180,233,.06);border:1px solid rgba(86,180,233,.15);border-radius:12px">
+          <div style="font-size:24px">📋</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:2px">~90 seconds per interaction</div>
+            <div style="font-size:12px;color:var(--m)">7 questions. Worker fills it out on their device during or right after a service interaction. No app to install — works in any browser.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb">
+        <div class="eyebrow2">How it connects to the strategic plan</div>
+        <div class="sh">Implementation <em>accountability</em></div>
+        <p style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:14px">Every strategic plan makes assumptions about how the service system works. This tool tests those assumptions in real time — before the next PIT count, before the next HMIS report, before the next grant cycle.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--p);border-radius:10px;border:1px solid var(--l)">
+            <span style="color:var(--c);font-size:16px;flex-shrink:0">→</span>
+            <div style="font-size:12px;color:var(--m);line-height:1.5"><strong style="color:var(--t)">Measures shelter access barriers</strong> — not just bed capacity, but who can't use the beds that exist</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--p);border-radius:10px;border:1px solid var(--l)">
+            <span style="color:var(--c);font-size:16px;flex-shrink:0">→</span>
+            <div style="font-size:12px;color:var(--m);line-height:1.5"><strong style="color:var(--t)">Tracks post-referral outcomes</strong> — whether the people we connect to services actually get them</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--p);border-radius:10px;border:1px solid var(--l)">
+            <span style="color:var(--c);font-size:16px;flex-shrink:0">→</span>
+            <div style="font-size:12px;color:var(--m);line-height:1.5"><strong style="color:var(--t)">Maps displacement patterns</strong> — where people go after sweeps and whether they reconnect to services</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--p);border-radius:10px;border:1px solid var(--l)">
+            <span style="color:var(--c);font-size:16px;flex-shrink:0">→</span>
+            <div style="font-size:12px;color:var(--m);line-height:1.5"><strong style="color:var(--t)">Surfaces invisible populations</strong> — the doubled-up, the motel-housed, the people who gave up trying</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--p);border-radius:10px;border:1px solid var(--l)">
+            <span style="color:var(--c);font-size:16px;flex-shrink:0">→</span>
+            <div style="font-size:12px;color:var(--m);line-height:1.5"><strong style="color:var(--t)">Validates what's working</strong> — not just what happened, but whether it actually helped</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background:rgba(0,114,178,.06);border-color:rgba(0,114,178,.2)">
+        <div class="eyebrow2">Next steps</div>
+        <div style="font-size:13px;color:var(--m);line-height:1.7">Outreach form launches with Tuesday/Thursday teams. Data flows into this dashboard in real time. Monthly brief for the coordinating committee. Quarterly diagnostic for the strategic plan review.</div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <a href="https://tally.so" target="_blank" style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;background:var(--v);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">→ Open outreach form</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     GAP ANALYSIS
+══════════════════════════════════════════════ -->
+<div id="gap" class="vw" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Gap Analysis</div>
+    <h1>What the official data <strong>can't see</strong></h1>
+    <p>A side-by-side comparison of what HMIS and the PIT count capture versus what this diagnostic tool is designed to surface.</p>
+  </div>
+
+  <div class="card mb">
+    <div class="sh">The <em>visibility gap</em></div>
+    <table class="gtable" role="table">
+      <thead>
+        <tr>
+          <th scope="col">What we want to know</th>
+          <th scope="col">HMIS</th>
+          <th scope="col">PIT Count</th>
+          <th scope="col">This Tool</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>How many people are experiencing homelessness right now</td>
+          <td class="miss"><span class="chk chk-n">✗</span>System-touched only</td>
+          <td class="miss"><span class="chk chk-n">✗</span>One night, January</td>
+          <td class="see"><span class="chk chk-y">✓</span>Weekly, year-round</td>
+        </tr>
+        <tr>
+          <td>People doubled-up, in motels, or couch surfing</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not counted</td>
+          <td class="see"><span class="chk chk-y">✓</span>Directly asked</td>
+        </tr>
+        <tr>
+          <td>Whether a referral actually resulted in services</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Records referral, not outcome</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not applicable</td>
+          <td class="see"><span class="chk chk-y">✓</span>Follow-up question</td>
+        </tr>
+        <tr>
+          <td>Why someone left or didn't engage with the system</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Exit reason only</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="see"><span class="chk chk-y">✓</span>Barrier multi-select</td>
+        </tr>
+        <tr>
+          <td>Where people went after a sweep or displacement</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not tracked</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not tracked</td>
+          <td class="see"><span class="chk chk-y">✓</span>Displacement history</td>
+        </tr>
+        <tr>
+          <td>Shelter rules that prevent people from accessing beds</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="see"><span class="chk chk-y">✓</span>Named barrier options</td>
+        </tr>
+        <tr>
+          <td>What services were actually provided at point of contact</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Partial — enrollment only</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not applicable</td>
+          <td class="see"><span class="chk chk-y">✓</span>Service checklist</td>
+        </tr>
+        <tr>
+          <td>Immigration fear as a barrier to service access</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Not captured</td>
+          <td class="see"><span class="chk chk-y">✓</span>Named barrier option</td>
+        </tr>
+        <tr>
+          <td>People who have stopped trying to access services</td>
+          <td class="miss"><span class="chk chk-n">✗</span>Invisible</td>
+          <td class="miss"><span class="chk chk-n">✗</span>May be counted, no context</td>
+          <td class="see"><span class="chk chk-y">✓</span>Prior contact history</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="eyebrow2">The invisible population</div>
+      <div class="sh">Who PIT <em>doesn't count</em></div>
+      <p style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:16px">The federal definition of homelessness used for PIT counts excludes most people who are unstably housed. The people outreach workers see every Tuesday and Thursday are often invisible to the count that drives funding decisions.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="bar-row"><span class="bar-label">Doubled-up / couch surfing</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--a)"></div></div><span class="bar-val" style="color:#ffd77a">Largest</span></div>
+        <div class="bar-row"><span class="bar-label">Motel / extended stay</span><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--pk)"></div></div><span class="bar-val" style="color:#e8b4d6">Significant</span></div>
+        <div class="bar-row"><span class="bar-label">Gave up on system</span><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--v)"></div></div><span class="bar-val" style="color:#7ec8f5">Hidden</span></div>
+        <div class="bar-row"><span class="bar-label">Avoiding contact (fear)</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--c)"></div></div><span class="bar-val" style="color:var(--c)">Unknown</span></div>
+      </div>
+      <p style="font-size:11px;color:var(--d);margin-top:12px;font-family:var(--mn)">Relative estimates — to be quantified once tool is live</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow2">The navigation gap</div>
+      <div class="sh">Between referral and <em>actual service</em></div>
+      <p style="font-size:13px;color:var(--m);line-height:1.7;margin-bottom:16px">HMIS records the referral. It rarely captures whether the person made it to the program, whether the program had space, whether the rules allowed them to enter, or whether they gave up before getting there.</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:12px 14px;background:rgba(230,159,0,.07);border:1px solid rgba(230,159,0,.18);border-radius:10px">
+          <div style="font-size:12px;font-weight:600;color:#ffd77a;margin-bottom:4px">Shelter rules as barriers</div>
+          <div style="font-size:12px;color:var(--m);line-height:1.5">No pets · No couples · Sobriety requirements · Curfews incompatible with work · Gender-binary facilities · ID requirements</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(204,121,167,.07);border:1px solid rgba(204,121,167,.18);border-radius:10px">
+          <div style="font-size:12px;font-weight:600;color:#e8b4d6;margin-bottom:4px">System failures</div>
+          <div style="font-size:12px;color:var(--m);line-height:1.5">Program at capacity · Waitlist months long · Phone number disconnected · Staff had nothing to offer · Application process too complex</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(0,114,178,.07);border:1px solid rgba(0,114,178,.18);border-radius:10px">
+          <div style="font-size:12px;font-weight:600;color:#7ec8f5;margin-bottom:4px">Trust collapse</div>
+          <div style="font-size:12px;color:var(--m);line-height:1.5">Prior negative experience · Immigration fear · Watched others fail · Gave up believing it would work</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     LIVE SIGNALS
+══════════════════════════════════════════════ -->
+<div id="signals" class="vw" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Live Signals — Outreach Worker Reports</div>
+    <h1>From the field, <strong>this week</strong></h1>
+    <p>Each signal is one interaction logged by an outreach worker during Tuesday or Thursday service runs. Sample data shown — tool launches [Month] 2026.</p>
+    <div class="meta">
+      <span class="pill"><span class="dot2 dot-a"></span> Sample signals — not real interactions</span>
+    </div>
+  </div>
+
+  <div class="g-main">
+    <div>
+      <!-- Sample signals -->
+      <div class="signal flag">
+        <div class="sig-head">
+          <div class="sig-av av3">MW</div>
+          <div class="sig-meta">
+            <div class="who">Outreach worker — Thursday run</div>
+            <div class="where">Bay Point · Medical care + navigation</div>
+          </div>
+        </div>
+        <div class="sig-body">Man, late 50s. Sleeping outside near the overpass for 4 months. Tried the shelter in Antioch twice — turned away both times because of his dog. Has not tried again. Provided hygiene kit and meal today. Declined referral — says he doesn't trust the system.</div>
+        <div class="sig-tags">
+          <span class="tag tag-loc">East County</span>
+          <span class="tag tag-bar">Shelter rules</span>
+          <span class="tag tag-bar">Trust barrier</span>
+          <span class="tag tag-sys">Prior contact — left</span>
+        </div>
+      </div>
+
+      <div class="signal">
+        <div class="sig-head">
+          <div class="sig-av av1">TN</div>
+          <div class="sig-meta">
+            <div class="who">Outreach worker — Tuesday run</div>
+            <div class="where">Richmond · Shower + food</div>
+          </div>
+        </div>
+        <div class="sig-body">Woman with two children. Staying in her sister's living room — sister's apartment is one bedroom. Kids not in school. No prior contact with shelter system. Said she didn't know where to go. Provided food and referral to family shelter — waitlist is 90 days.</div>
+        <div class="sig-tags">
+          <span class="tag tag-loc">West County</span>
+          <span class="tag tag-disp">Doubled-up — invisible to PIT</span>
+          <span class="tag tag-sys">No prior contact</span>
+          <span class="tag tag-bar">Waitlist</span>
+        </div>
+      </div>
+
+      <div class="signal flag">
+        <div class="sig-head">
+          <div class="sig-av av4">MR</div>
+          <div class="sig-meta">
+            <div class="who">Outreach worker — Thursday run</div>
+            <div class="where">Concord · Navigation</div>
+          </div>
+        </div>
+        <div class="sig-body">Man swept from encampment near Todos Santos three weeks ago. Now sleeping behind a strip mall. Lost his ID in the sweep. Can't access shelter without ID. Can't get ID without a permanent address. Has tried twice to get help — gave up. Worker flagged for ID recovery support.</div>
+        <div class="sig-tags">
+          <span class="tag tag-loc">Central County</span>
+          <span class="tag tag-bar">ID barrier — Catch-22</span>
+          <span class="tag tag-disp">Post-sweep displacement</span>
+          <span class="tag tag-sys">Prior contact — turned away</span>
+        </div>
+      </div>
+
+      <div class="signal">
+        <div class="sig-head">
+          <div class="sig-av av2">SL</div>
+          <div class="sig-meta">
+            <div class="who">Outreach worker — Tuesday run</div>
+            <div class="where">Pittsburg · Medical care</div>
+          </div>
+        </div>
+        <div class="sig-body">Woman, 30s, living in her car with her partner in a Walmart parking lot. Partner has a dog — no shelter will take them as a couple with a pet. She has a job interview next week. Provided shower voucher and bus pass. Accepted navigation referral — first time engaging with services.</div>
+        <div class="sig-tags">
+          <span class="tag tag-loc">East County</span>
+          <span class="tag tag-bar">Couples + pet barrier</span>
+          <span class="tag tag-svc">Shower · Bus pass · Referral</span>
+          <span class="tag tag-sys">First contact</span>
+        </div>
+      </div>
+
+      <div class="signal">
+        <div class="sig-head">
+          <div class="sig-av av5">JT</div>
+          <div class="sig-meta">
+            <div class="who">Outreach worker — Thursday run</div>
+            <div class="where">San Pablo · Food + hygiene</div>
+          </div>
+        </div>
+        <div class="sig-body">Older man — outside in Richmond for over a year. Knows every program, every navigator. Says there is genuinely nothing available for a single man his age who isn't in a crisis program. Worker confirmed — no appropriate placement available. Provided meal and hygiene supplies.</div>
+        <div class="sig-tags">
+          <span class="tag tag-loc">West County</span>
+          <span class="tag tag-bar">No appropriate placement</span>
+          <span class="tag tag-sys">Chronically disengaged</span>
+          <span class="tag tag-svc">Food · Hygiene</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb">
+        <div class="eyebrow2">This week at a glance</div>
+        <div class="sh">Signal <em>summary</em></div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--l)">
+            <span style="font-size:13px;color:var(--m)">Interactions logged</span>
+            <span style="font-family:var(--mn);font-size:13px;color:var(--t)">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--l)">
+            <span style="font-size:13px;color:var(--m)">Invisible to PIT count</span>
+            <span style="font-family:var(--mn);font-size:13px;color:#ffd77a">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--l)">
+            <span style="font-size:13px;color:var(--m)">Swept in last 6 months</span>
+            <span style="font-family:var(--mn);font-size:13px;color:#e8b4d6">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--l)">
+            <span style="font-size:13px;color:var(--m)">Prior contact — left/turned away</span>
+            <span style="font-family:var(--mn);font-size:13px;color:var(--c)">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+            <span style="font-size:13px;color:var(--m)">Services provided today</span>
+            <span style="font-family:var(--mn);font-size:13px;color:var(--g)">—</span>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--d);font-family:var(--mn);margin-top:12px">Live data populates when form is deployed</p>
+      </div>
+
+      <div class="card mb">
+        <div class="eyebrow2">Top barriers this week</div>
+        <div style="font-size:12px;color:var(--d);font-family:var(--mn);margin-bottom:12px">Populates when tool is live</div>
+        <div class="bar-row"><span class="bar-label">Shelter rules</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--a)"></div></div><span class="bar-val">—</span></div>
+        <div class="bar-row"><span class="bar-label">No ID / documents</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--pk)"></div></div><span class="bar-val">—</span></div>
+        <div class="bar-row"><span class="bar-label">Waitlist / no capacity</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--v)"></div></div><span class="bar-val">—</span></div>
+        <div class="bar-row"><span class="bar-label">Trust / gave up</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--c)"></div></div><span class="bar-val">—</span></div>
+        <div class="bar-row"><span class="bar-label">Immigration fear</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--g)"></div></div><span class="bar-val">—</span></div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow2">Services provided</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px">
+          <span style="padding:6px 12px;border-radius:999px;background:rgba(0,158,115,.1);border:1px solid rgba(0,158,115,.2);font-size:12px;color:var(--g)">Food / water</span>
+          <span style="padding:6px 12px;border-radius:999px;background:rgba(86,180,233,.1);border:1px solid rgba(86,180,233,.2);font-size:12px;color:var(--c)">Hygiene / shower</span>
+          <span style="padding:6px 12px;border-radius:999px;background:rgba(0,114,178,.1);border:1px solid rgba(0,114,178,.2);font-size:12px;color:#7ec8f5">Medical care</span>
+          <span style="padding:6px 12px;border-radius:999px;background:rgba(204,121,167,.1);border:1px solid rgba(204,121,167,.2);font-size:12px;color:#e8b4d6">Navigation</span>
+          <span style="padding:6px 12px;border-radius:999px;background:rgba(230,159,0,.1);border:1px solid rgba(230,159,0,.2);font-size:12px;color:#ffd77a">ID assistance</span>
+        </div>
+        <p style="font-size:11px;color:var(--d);font-family:var(--mn);margin-top:12px">Counts populate when tool is live</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SYSTEM MAP
+══════════════════════════════════════════════ -->
+<div id="system" class="vw" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">System Map</div>
+    <h1>How the service system <strong>performs</strong> in practice</h1>
+    <p>A diagnostic view of where the system works, where it stalls, and where people fall through entirely. Based on outreach worker signal data.</p>
+  </div>
+
+  <div class="card mb">
+    <div class="eyebrow2">The navigation pathway — what we're measuring at each stage</div>
+    <div class="sh">From <em>street contact</em> to stable housing</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:16px;position:relative">
+      <div style="position:absolute;top:28px;left:10%;right:10%;height:2px;background:var(--l);z-index:0"></div>
+      <div style="text-align:center;position:relative;z-index:1" onclick="showStage(0)" style="cursor:pointer">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(86,180,233,.15);border:2px solid var(--c);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">📡</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Outreach contact</div>
+        <div style="font-size:11px;color:var(--d)">First touch</div>
+      </div>
+      <div style="text-align:center;position:relative;z-index:1">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(0,114,178,.15);border:2px solid var(--v);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">🗺️</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Assessment</div>
+        <div style="font-size:11px;color:var(--d)">VI-SPDAT / needs</div>
+      </div>
+      <div style="text-align:center;position:relative;z-index:1">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(230,159,0,.15);border:2px solid var(--a);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">🔗</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Referral</div>
+        <div style="font-size:11px;color:var(--d)">Program connection</div>
+      </div>
+      <div style="text-align:center;position:relative;z-index:1">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(204,121,167,.15);border:2px solid var(--pk);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">🏠</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Interim housing</div>
+        <div style="font-size:11px;color:var(--d)">Shelter / transitional</div>
+      </div>
+      <div style="text-align:center;position:relative;z-index:1">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(0,158,115,.15);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">🔑</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Permanent housing</div>
+        <div style="font-size:11px;color:var(--d)">Goal</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:14px 16px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:12px;font-size:13px;color:var(--m);line-height:1.6">
+      <strong style="color:#ffd77a">This tool measures the gaps between each stage</strong> — not just whether someone was referred, but whether the referral worked, what got in the way, and whether the person is still engaged with the system.
+    </div>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="eyebrow2">Stage diagnostics — outreach to assessment</div>
+      <div class="sh">Who we're <em>reaching</em></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="track-item"><div class="tn tn-act">📡</div><div class="track-body"><div class="tt">Outreach contact logged</div><div class="ts">Worker interaction recorded at point of service. Captures location, situation, services provided.</div></div><div class="tc tc-act">Measured</div></div>
+        <div class="track-item"><div class="tn tn-pend">?</div><div class="track-body"><div class="tt">Sleeping situation last night</div><div class="ts">Outside / vehicle / shelter / doubled-up / motel. Surfaces the population invisible to PIT.</div></div><div class="tc tc-pend">Key question</div></div>
+        <div class="track-item"><div class="tn tn-gap">!</div><div class="track-body"><div class="tt">Prior system contact history</div><div class="ts">Have they tried before? What happened? HMIS records the contact — this captures what came of it.</div></div><div class="tc tc-gap">Gap filled</div></div>
+        <div class="track-item"><div class="tn tn-gap">!</div><div class="track-body"><div class="tt">Displacement history — swept?</div><div class="ts">Were they displaced in the last 6 months? Did they reconnect to services after? HMIS doesn't track this.</div></div><div class="tc tc-gap">Gap filled</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="eyebrow2">Stage diagnostics — referral to housing</div>
+      <div class="sh">Where the system <em>stalls</em></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="track-item"><div class="tn tn-gap">!</div><div class="track-body"><div class="tt">Shelter access barriers</div><div class="ts">Rules that prevent entry: pets, couples, sobriety, curfew, ID, gender-binary facilities.</div></div><div class="tc tc-gap">Gap filled</div></div>
+        <div class="track-item"><div class="tn tn-gap">!</div><div class="track-body"><div class="tt">Referral outcome tracking</div><div class="ts">Did the referral result in actual services? HMIS records the referral. This captures whether it worked.</div></div><div class="tc tc-gap">Gap filled</div></div>
+        <div class="track-item"><div class="tn tn-pend">?</div><div class="track-body"><div class="tt">Trust and disengagement</div><div class="ts">People who have stopped trying. Immigration fear. Prior harm in the system. The invisible giving-up.</div></div><div class="tc tc-pend">Key question</div></div>
+        <div class="track-item"><div class="tn tn-act">✓</div><div class="track-body"><div class="tt">Services provided at contact</div><div class="ts">What was actually given today — food, hygiene, medical, navigation, ID help. The immediate need met.</div></div><div class="tc tc-act">Measured</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow2">Monthly diagnostic output — what this produces</div>
+    <div class="sh">For the coordinating committee <em>and</em> CAO briefing</div>
+    <div class="g3" style="margin-top:14px">
+      <div style="padding:16px;background:var(--p);border-radius:12px;border:1px solid var(--l)">
+        <div style="font-size:20px;margin-bottom:10px">📊</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">System performance score</div>
+        <div style="font-size:12px;color:var(--m);line-height:1.5">What percentage of referrals resulted in actual services. What percentage of people with barriers had them addressed. How many post-sweep individuals reconnected.</div>
+      </div>
+      <div style="padding:16px;background:var(--p);border-radius:12px;border:1px solid var(--l)">
+        <div style="font-size:20px;margin-bottom:10px">🗺️</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">Geographic gap map</div>
+        <div style="font-size:12px;color:var(--m);line-height:1.5">Where the invisible population concentrates. Where services aren't reaching. Where displacement is pushing people to that outreach isn't currently covering.</div>
+      </div>
+      <div style="padding:16px;background:var(--p);border-radius:12px;border:1px solid var(--l)">
+        <div style="font-size:20px;margin-bottom:10px">📋</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">Barrier elimination brief</div>
+        <div style="font-size:12px;color:var(--m);line-height:1.5">A ranked list of the specific shelter rules and system failures blocking access — with the data to make the case for changing them in the strategic plan.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════ -->
+<div id="about" class="vw" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">About this tool</div>
+    <h1>Built for the <strong>strategic plan</strong></h1>
+    <p>A service system diagnostic tool for the Contra Costa County Homelessness Strategic Plan — specifically the implementation phase.</p>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="eyebrow2">The approach</div>
+      <div class="sh">Lived experience as <em>real-time system testing</em></div>
+      <p style="font-size:14px;color:var(--m);line-height:1.7;margin-bottom:14px">Every strategic plan makes assumptions about how the service system works. The people moving through that system — right now, this week — are the best possible test of whether those assumptions are correct.</p>
+      <p style="font-size:14px;color:var(--m);line-height:1.7;margin-bottom:14px">This tool gives outreach workers a simple, fast way to capture what they're seeing during Tuesday and Thursday service runs — and turns those observations into structured data that the coordinating committee and county leadership can act on.</p>
+      <p style="font-size:14px;color:var(--m);line-height:1.7">It doesn't replace HMIS. It fills the gaps that HMIS and the Point-in-Time count can't reach — the invisible population, the navigation failures, the barriers at point of service, the people who have stopped trying.</p>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="eyebrow2">The outreach form — 7 questions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>1.</strong> Where are you right now? <span style="color:var(--d)">(sub-region)</span></div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>2.</strong> Where did this person sleep last night?</div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>3.</strong> Swept or displaced in the past 6 months?</div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>4.</strong> Prior contact with shelter or navigation system?</div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>5.</strong> If prior contact — what got in the way?</div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>6.</strong> What was provided at today's interaction?</div>
+          <div style="padding:10px 14px;background:var(--p);border-radius:10px;border:1px solid var(--l);font-size:13px"><strong>7.</strong> Worker notes <span style="color:var(--d)">(optional)</span></div>
+        </div>
+      </div>
+      <div class="card" style="background:rgba(0,114,178,.05);border-color:rgba(0,114,178,.18)">
+        <div class="eyebrow2">Deployment</div>
+        <div style="font-size:13px;color:var(--m);line-height:1.7">Tuesday and Thursday outreach runs. Workers use their own devices — no app to install. Form optimized for mobile. Takes approximately 60–90 seconds per interaction.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qblock">
+    <p>"People who are currently moving through the homelessness system are the best real-time test of how that system performs. This tool captures what HMIS records and the Point-in-Time count can't see — the experience behind the data."</p>
+    <div class="qmeta">CCC Homelessness Strategic Plan — Implementation Phase</div>
+  </div>
+
+  <div class="about-footer">
+    <p>This tool is part of the Contra Costa County Homelessness Strategic Plan implementation — supporting gap analysis and service system diagnostics.<br>Data collected via Tally. Dashboard updated as signals come in.</p>
+    <div class="dd-badge">A DALBERT DESIGN SERVICE</div>
+  </div>
+</div>
+
+</div><!-- /ap -->
+
+<script>
+function show(id){
+  document.querySelectorAll('.vw').forEach(v=>v.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('nav.tabs button').forEach((b,i)=>{
+    const ids=['overview','gap','signals','system','about'];
+    const active=ids[i]===id;
+    b.classList.toggle('on',active);
+    b.setAttribute('aria-selected',String(active));
+  });
+  window.scrollTo({top:0,behavior:'instant'});
+}
+</script>
+</body>
+</html>
