@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d1a">
+<title>Community Service Map — Contra Costa County</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,500&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#080d1a;--glass:rgba(255,255,255,.03);--rim:rgba(255,255,255,.08);--rim2:rgba(255,255,255,.15);
+  --text:#eef4ff;--muted:#8a9fc0;--dim:#4a5a78;
+  --blue:#56B4E9;--navy:#0072B2;--amber:#E69F00;--teal:#009E73;--rose:#CC79A7;--lemon:#F0E442;
+  --ff-d:'Fraunces',Georgia,serif;--ff-b:'DM Sans',system-ui,sans-serif;--ff-m:'JetBrains Mono',monospace;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased;color-scheme:dark}
+body{font-family:var(--ff-b);background:var(--ink);color:var(--text);min-height:100vh;line-height:1.6}
+button,a{font:inherit;cursor:pointer;text-decoration:none}
+:focus-visible{outline:2px solid var(--lemon);outline-offset:3px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.skip{position:absolute;left:-9999px;top:0;z-index:999;background:var(--lemon);color:var(--ink);padding:8px 16px;font-weight:600;font-size:13px}
+.skip:focus{left:0}
+.tb{position:sticky;top:0;z-index:40;background:rgba(8,13,26,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--rim)}
+.tb-i{max-width:1320px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;gap:18px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.lmark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--blue));display:grid;place-items:center}
+.lmark svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ltxt strong{display:block;font-family:var(--ff-d);font-weight:700;font-size:14px;letter-spacing:-.02em}
+.ltxt span{display:block;font-size:10px;color:var(--dim);font-family:var(--ff-m);letter-spacing:.06em;text-transform:uppercase}
+.sep{width:1px;height:24px;background:var(--rim);flex-shrink:0}
+.tabs{display:flex;gap:1px;flex:1}
+.tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;display:flex;align-items:center;gap:6px;transition:.15s}
+.tab:hover{color:var(--text);background:var(--glass)}
+.tab.on{color:var(--text);background:rgba(255,255,255,.06)}
+.tab .pip{width:5px;height:5px;border-radius:50%;background:var(--dim)}
+.tab.on .pip{background:var(--teal)}
+.badge{margin-left:auto;flex-shrink:0;padding:4px 10px;border-radius:999px;font-family:var(--ff-m);font-size:10px;color:#5de8c8;background:rgba(0,158,115,.1);border:1px solid rgba(0,158,115,.2)}
+.page{max-width:1320px;margin:0 auto;padding:32px 24px 100px}
+.view{display:none;animation:up .25s ease both}
+.view.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ph{margin-bottom:32px}
+.eyebrow{font-family:var(--ff-m);font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--teal);margin-bottom:10px}
+.ph h1{font-family:var(--ff-d);font-weight:300;font-style:italic;font-size:44px;line-height:1.05;letter-spacing:-.04em;margin-bottom:12px}
+.ph h1 strong{font-style:normal;font-weight:700}
+.ph p{font-size:15px;color:var(--muted);max-width:640px;line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-family:var(--ff-m);font-size:10px;border:1px solid var(--rim);color:var(--muted)}
+.chip-dot{width:5px;height:5px;border-radius:50%}
+.card{background:var(--glass);border:1px solid var(--rim);border-radius:16px;padding:22px}
+.card-title{font-family:var(--ff-d);font-size:19px;font-weight:700;letter-spacing:-.025em;margin-bottom:4px}
+.card-title em{color:var(--teal);font-style:italic;font-weight:400}
+.lbl{font-family:var(--ff-m);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-bottom:6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gml{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+.mt{margin-top:16px}
+.stat{padding:22px 24px}
+.snum{font-family:var(--ff-d);font-size:46px;font-weight:700;line-height:1;letter-spacing:-.05em}
+.slbl{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500}
+.snote{font-family:var(--ff-m);font-size:10px;color:var(--dim);margin-top:6px}
+.sw{color:#ffc94d}.sb{color:var(--blue)}.st{color:var(--teal)}.sr{color:var(--rose)}
+.brow{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.blab{font-size:12px;color:var(--muted);width:200px;flex-shrink:0;line-height:1.3}
+.btrack{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden}
+.bfill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.bval{font-family:var(--ff-m);font-size:11px;font-weight:600;color:var(--text);width:28px;text-align:right}
+.signal{padding:16px 18px;background:var(--glass);border:1px solid var(--rim);border-radius:14px;margin-bottom:10px;transition:.15s border-color}
+.signal:hover{border-color:var(--rim2)}
+.signal.warn{border-left:3px solid var(--amber)}
+.signal.ok{border-left:3px solid var(--teal)}
+.signal.bad{border-left:3px solid var(--rose)}
+.sig-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;font-family:var(--ff-m)}
+.av1{background:linear-gradient(135deg,#009E73,#56B4E9)}
+.av2{background:linear-gradient(135deg,#0072B2,#56B4E9)}
+.av3{background:linear-gradient(135deg,#E69F00,#CC79A7)}
+.av4{background:linear-gradient(135deg,#CC79A7,#0072B2)}
+.sig-who{font-size:13px;font-weight:600}
+.sig-where{font-size:10px;color:var(--dim);font-family:var(--ff-m);letter-spacing:.04em}
+.sig-body{font-size:13px;color:#d8e8ff;line-height:1.65;margin-bottom:9px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:var(--ff-m);font-size:9px;padding:3px 8px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase}
+.tag-geo{background:rgba(0,158,115,.1);color:#5de8c8}
+.tag-sit{background:rgba(230,159,0,.1);color:#ffd77a}
+.tag-fed{background:rgba(204,121,167,.1);color:#e8c4d8}
+.tag-sys{background:rgba(86,180,233,.1);color:#9dd5f5}
+.tag-ok{background:rgba(0,158,115,.1);color:#5de8c8}
+.qb{padding:14px 18px;margin-bottom:10px;border-left:3px solid var(--teal);background:rgba(0,158,115,.04);border-radius:0 12px 12px 0}
+.qb.amber{border-color:var(--amber);background:rgba(230,159,0,.04)}
+.qb.rose{border-color:var(--rose);background:rgba(204,121,167,.04)}
+.qb.blue{border-color:var(--blue);background:rgba(86,180,233,.04)}
+.qb p{font-style:italic;font-size:13px;color:#d0e4ff;line-height:1.7}
+.qb-meta{font-family:var(--ff-m);font-size:9px;color:var(--dim);margin-top:7px;letter-spacing:.08em;text-transform:uppercase}
+.hbox{padding:14px 16px;border-radius:12px;border:1px solid var(--rim);border-left:3px solid;margin-bottom:10px}
+.hbox-t{border-color:rgba(0,158,115,.25);border-left-color:var(--teal);background:rgba(0,158,115,.04)}
+.hbox-a{border-color:rgba(230,159,0,.25);border-left-color:var(--amber);background:rgba(230,159,0,.04)}
+.hbox-b{border-color:rgba(86,180,233,.25);border-left-color:var(--blue);background:rgba(86,180,233,.04)}
+.hbox-r{border-color:rgba(204,121,167,.25);border-left-color:var(--rose);background:rgba(204,121,167,.04)}
+.hbox-n{border-color:rgba(0,114,178,.25);border-left-color:var(--navy);background:rgba(0,114,178,.04)}
+.hbox-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.hbox-body{font-size:12px;color:var(--muted);line-height:1.6}
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+.lrow:last-child{border-bottom:0}
+.lrow-l{font-size:13px;color:var(--muted)}
+.lrow-v{font-family:var(--ff-d);font-size:22px;font-weight:700;letter-spacing:-.03em}
+.bignum{font-family:var(--ff-d);font-size:52px;font-weight:700;line-height:1;letter-spacing:-.05em}
+.foot{margin-top:48px;padding:18px 22px;background:var(--glass);border:1px solid var(--rim);border-radius:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot p{font-size:12px;color:var(--dim);line-height:1.6}
+.dd{font-family:var(--ff-m);font-size:10px;color:var(--dim);border:1px solid var(--rim);padding:5px 10px;border-radius:6px;letter-spacing:.08em}
+@media(max-width:1100px){.gml{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.g2,.g3,.g4,.gml{grid-template-columns:1fr}.page{padding:16px 14px 80px}.ph h1{font-size:30px}.tb-i{padding:0 14px}}
+@media(max-width:520px){.ph h1{font-size:24px}.snum{font-size:36px}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip">Skip to main content</a>
+<header class="tb" role="banner">
+  <div class="tb-i">
+    <div class="logo">
+      <div class="lmark"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+      <div class="ltxt"><strong>Community Service Map</strong><span>Contra Costa County</span></div>
+    </div>
+    <div class="sep" aria-hidden="true"></div>
+    <nav class="tabs" aria-label="Dashboard sections">
+      <button class="tab on" onclick="show('overview')" aria-selected="true"><span class="pip"></span>Overview</button>
+      <button class="tab" onclick="show('signals')" aria-selected="false"><span class="pip"></span>Signals</button>
+      <button class="tab" onclick="show('systems')" aria-selected="false"><span class="pip"></span>System Response</button>
+      <button class="tab" onclick="show('federal')" aria-selected="false"><span class="pip"></span>Federal Cuts</button>
+      <button class="tab" onclick="show('about')" aria-selected="false"><span class="pip"></span>About</button>
+    </nav>
+    <div class="badge">41 signals · Jun 2026</div>
+  </div>
+</header>
+
+<div class="page" id="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="view on" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Community Service Map · Contra Costa County · June 2026</div>
+    <h1>What residents are<br><strong>experiencing right now</strong></h1>
+    <p>41 anonymous signals from CCC residents, neighbors, and workers — collected June 1–10, 2026. Not an application. Not a data request. A map of what's actually happening, told by the people living it.</p>
+    <div class="chips">
+      <span class="chip"><span class="chip-dot" style="background:var(--teal)"></span>Anonymous · never shared without permission</span>
+      <span class="chip"><span class="chip-dot" style="background:var(--blue)"></span>Community-reported</span>
+      <span class="chip"><span class="chip-dot" style="background:var(--amber)"></span>Jun 1–10, 2026</span>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-bottom:18px">
+    <div class="card stat">
+      <div class="slbl">Signals received</div>
+      <div class="snum">41</div>
+      <div class="snote">June 1–10, 2026</div>
+    </div>
+    <div class="card stat">
+      <div class="slbl">Say things are worse</div>
+      <div class="snum sw">93%</div>
+      <div class="snote">38 of 41 vs. 6 months ago</div>
+    </div>
+    <div class="card stat">
+      <div class="slbl">Federal cuts connected</div>
+      <div class="snum sr">76%</div>
+      <div class="snote">31 of 41 — directly or probably</div>
+    </div>
+    <div class="card stat">
+      <div class="slbl">System response failed</div>
+      <div class="snum sw">46%</div>
+      <div class="snote">19 tried — referral, call, or gave up</div>
+    </div>
+  </div>
+
+  <div class="gml">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="lbl">What situations are being reported</div>
+        <div class="card-title">Housing <em>stress signals</em></div>
+        <p style="font-size:13px;color:var(--muted);margin:10px 0 18px;line-height:1.7">Respondents selected all situations that apply. Rent unaffordability is the most widespread signal — but housing voucher loss, eviction, and homelessness cluster behind it, showing the full cascade of housing crisis.</p>
+        <div class="brow"><span class="blab">Can't afford rent</span><div class="btrack"><div class="bfill" style="width:100%;background:var(--amber)"></div></div><span class="bval">11</span></div>
+        <div class="brow"><span class="blab">Received eviction notice</span><div class="btrack"><div class="bfill" style="width:73%;background:var(--rose)"></div></div><span class="bval">8</span></div>
+        <div class="brow"><span class="blab">Lost food benefits / groceries</span><div class="btrack"><div class="bfill" style="width:73%;background:var(--teal)"></div></div><span class="bval">8</span></div>
+        <div class="brow"><span class="blab">Homeless / no stable place</span><div class="btrack"><div class="bfill" style="width:64%;background:var(--navy)"></div></div><span class="bval">7</span></div>
+        <div class="brow"><span class="blab">Lost job / reduced hours</span><div class="btrack"><div class="bfill" style="width:55%;background:var(--blue)"></div></div><span class="bval">6</span></div>
+        <div class="brow"><span class="blab">Lost health insurance / care</span><div class="btrack"><div class="bfill" style="width:55%;background:var(--rose)"></div></div><span class="bval">6</span></div>
+        <div class="brow"><span class="blab">Seeing more in neighborhood</span><div class="btrack"><div class="bfill" style="width:45%;background:var(--dim)"></div></div><span class="bval">5</span></div>
+        <div class="brow"><span class="blab">Lost housing voucher / Sec 8</span><div class="btrack"><div class="bfill" style="width:36%;background:var(--amber)"></div></div><span class="bval">4</span></div>
+        <div style="margin-top:14px;padding:11px 14px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:10px;font-size:12px;color:#ffd77a;line-height:1.5">
+          <strong>Multiple crises hitting at once.</strong> Most respondents selected 2+ situations. Housing cost, job loss, benefit cuts, and health coverage loss are cascading together — not arriving separately.
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="lbl">Geographic distribution</div>
+        <div class="card-title">Signals by <em>sub-region</em></div>
+        <div class="g3" style="margin-top:14px">
+          <div style="padding:16px;background:rgba(86,180,233,.07);border:1px solid rgba(86,180,233,.18);border-radius:12px;text-align:center">
+            <div class="bignum" style="color:var(--blue);font-size:38px">15</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:5px">West County</div>
+            <div style="font-family:var(--ff-m);font-size:10px;color:var(--dim);margin-top:3px">37%</div>
+          </div>
+          <div style="padding:16px;background:rgba(204,121,167,.07);border:1px solid rgba(204,121,167,.18);border-radius:12px;text-align:center">
+            <div class="bignum" style="color:#e8c4d8;font-size:38px">14</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:5px">East County</div>
+            <div style="font-family:var(--ff-m);font-size:10px;color:var(--dim);margin-top:3px">34%</div>
+          </div>
+          <div style="padding:16px;background:rgba(0,114,178,.07);border:1px solid rgba(0,114,178,.18);border-radius:12px;text-align:center">
+            <div class="bignum" style="color:#7ec8f5;font-size:38px">9</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:5px">Central County</div>
+            <div style="font-family:var(--ff-m);font-size:10px;color:var(--dim);margin-top:3px">22%</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(0,158,115,.06);border:1px solid rgba(0,158,115,.15);border-radius:10px;font-size:12px;color:#5de8c8">
+          3 signals from unincorporated areas (7%) — a population that often lacks access to city-level resources.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Community sentiment</div>
+        <div class="card-title">Is it getting <em>better or worse?</em></div>
+        <canvas id="ch_trend" style="max-height:180px;margin:14px 0"></canvas>
+        <div style="padding:12px 14px;background:rgba(204,121,167,.06);border:1px solid rgba(204,121,167,.2);border-radius:10px;font-size:12px;color:#e8c4d8;line-height:1.5">
+          <strong>93% say things are worse</strong> than 6 months ago. No one reported "much better." 3 respondents said "about the same." The community direction is unambiguous.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="lbl">Key findings from 41 signals</div>
+        <div class="card-title" style="margin-bottom:14px">What this week<em> revealed</em></div>
+        <div class="hbox hbox-a">
+          <div class="hbox-title" style="color:#ffd77a">Rent crisis is the anchor issue</div>
+          <div class="hbox-body">11 of 41 can't afford rent — the single most common signal. But it rarely comes alone: eviction notices, voucher loss, and job loss cluster around it. This is a cascade, not a single problem.</div>
+        </div>
+        <div class="hbox hbox-r">
+          <div class="hbox-title" style="color:#e8c4d8">76% say federal cuts played a role</div>
+          <div class="hbox-body">31 of 41 respondents — directly or probably. SNAP/CalFresh (10) and Medicaid/Medi-Cal (8) are the programs named most. Section 8 loss affects 4 families with nowhere to go.</div>
+        </div>
+        <div class="hbox hbox-t">
+          <div class="hbox-title" style="color:var(--teal)">System worked for 22% — outreach and advocates made the difference</div>
+          <div class="hbox-body">9 people got connected to something that helped. In almost every case, it was a person — a navigator, outreach worker, or tenant rights clinic — not a system. The system alone isn't catching people.</div>
+        </div>
+        <div class="hbox hbox-b">
+          <div class="hbox-title" style="color:var(--blue)">Ghost programs eroding trust</div>
+          <div class="hbox-body">Multiple respondents applied to programs listed as active that had already closed. One person contacted 8 agencies — 3 voicemail, 2 wrong zip, 2 closed intake, 1 waitlist. This is system failure, not personal failure.</div>
+        </div>
+        <div class="hbox hbox-n">
+          <div class="hbox-title" style="color:#7ec8f5">Workers and neighbors are reporting what families can't</div>
+          <div class="hbox-body">Teachers, nurses, librarians, pantry operators, and home care workers filed signals on behalf of people they serve. The community is functioning as a distributed early warning system.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Who is filing signals</div>
+        <div class="card-title" style="margin-bottom:10px">Reporter <em>perspective</em></div>
+        <canvas id="ch_who" style="max-height:180px;margin-bottom:10px"></canvas>
+        <p style="font-size:12px;color:var(--dim);line-height:1.6">Service workers — case managers, nurses, teachers, librarians — are using this tool to report what they see. Their signals represent many more people than the count suggests.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNALS -->
+<div id="signals" class="view" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Community signals · June 1–10, 2026</div>
+    <h1>In their <strong>own words</strong></h1>
+    <p>Anonymized open-text responses. Each entry is a real situation. Amber = system failed or gap. Green = something worked. Red = urgent / safety concern.</p>
+  </div>
+  <div class="gml">
+    <div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av2">WC</div><div><div class="sig-who">Community member</div><div class="sig-where">West County · Jun 1</div></div></div>
+        <div class="sig-body">I've been behind on rent since March. My hours got cut and I applied for emergency rental assistance but was told the program ran out of funding. My landlord served me a 3-day notice this week.</div>
+        <div class="tags"><span class="tag tag-geo">West County</span><span class="tag tag-sit">Rent crisis</span><span class="tag tag-sys">Program out of funds</span><span class="tag tag-fed">Fed cuts: direct</span></div>
+      </div>
+      <div class="signal bad">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Community member</div><div class="sig-where">East County · Jun 1</div></div></div>
+        <div class="sig-body">Our Section 8 voucher was terminated in April. We've been on the waitlist 6 years and finally got it two years ago. Now it's gone. I have three kids and we're looking at being homeless by end of month.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Voucher terminated</span><span class="tag tag-sys">4 calls, 2 disconnected</span><span class="tag tag-fed">Section 8 / housing</span></div>
+      </div>
+      <div class="signal ok">
+        <div class="sig-top"><div class="av av1">CC</div><div><div class="sig-who">Community member</div><div class="sig-where">Central County · Jun 1</div></div></div>
+        <div class="sig-body">Got an eviction notice after my landlord found out I had two extra people staying with me — my sister and her daughter who lost their place. Legal aid helped us negotiate more time.</div>
+        <div class="tags"><span class="tag tag-geo">Central County</span><span class="tag tag-sit">Eviction notice</span><span class="tag tag-ok">Legal aid helped</span></div>
+      </div>
+      <div class="signal bad">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Community member</div><div class="sig-where">East County · Jun 1</div></div></div>
+        <div class="sig-body">My Medi-Cal got terminated in March. I'm diabetic and insulin costs $400/month without coverage. Called 211 — sent to a county clinic with a 3-month waitlist. I can't wait 3 months.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Lost health insurance</span><span class="tag tag-sys">3 referrals, all 60–90 day waitlists</span><span class="tag tag-fed">Medicaid / Medi-Cal</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av2">WC</div><div><div class="sig-who">Teacher — school worker</div><div class="sig-where">West County · Jun 1</div></div></div>
+        <div class="sig-body">I work at a school in Richmond. We have 14 students whose families are in housing crisis — up from 3 last year. Three families are living in their cars. Two kids have missed 10+ days because of unstable living situations.</div>
+        <div class="tags"><span class="tag tag-geo">West County</span><span class="tag tag-sit">Seeing more in community</span><span class="tag tag-sys">No referral path found</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av1">CC</div><div><div class="sig-who">Community member</div><div class="sig-where">Central County · Jun 2</div></div></div>
+        <div class="sig-body">My CalFresh was cut when my hours temporarily increased. Hours dropped again but recertification takes 45 days. My family has been rationing food for six weeks. Paid cash for work — no paystubs, system couldn't override.</div>
+        <div class="tags"><span class="tag tag-geo">Central County</span><span class="tag tag-sit">Lost food benefits</span><span class="tag tag-sys">Documentation barrier</span><span class="tag tag-fed">SNAP / CalFresh</span></div>
+      </div>
+      <div class="signal bad">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Nonprofit case manager</div><div class="sig-where">East County · Jun 2</div></div></div>
+        <div class="sig-body">I'm a case manager at a nonprofit in Antioch. The need has tripled in 6 months. Waitlist went from 20 to 90 people. We've had to turn away families with young children. There's nothing left for prevention — only crisis.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Service capacity</span><span class="tag tag-fed">SNAP · Medi-Cal · Rental assistance</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av2">WC</div><div><div class="sig-who">Community member</div><div class="sig-where">West County · Jun 2</div></div></div>
+        <div class="sig-body">Single mom, two kids under 5. Eviction notice came last week — first time in 8 years. I called every number I could find. Most went to voicemail. One transferred me four times before disconnecting. Spent an entire day on the phone and got nowhere.</div>
+        <div class="tags"><span class="tag tag-geo">West County</span><span class="tag tag-sit">Eviction · Rent</span><span class="tag tag-sys">Disconnected 4x</span></div>
+      </div>
+      <div class="signal ok">
+        <div class="sig-top"><div class="av av4">Uninc</div><div><div class="sig-who">Community member</div><div class="sig-where">Unincorporated · Jun 2</div></div></div>
+        <div class="sig-body">My brother has been living outside near the creek for four months. An outreach worker connected him to a navigation center. He's on the waitlist but at least someone knows his name now. The outreach worker was the difference.</div>
+        <div class="tags"><span class="tag tag-geo">Unincorporated</span><span class="tag tag-sit">Homelessness</span><span class="tag tag-ok">Outreach worker made the connection</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Community member</div><div class="sig-where">East County · Jun 3</div></div></div>
+        <div class="sig-body">Got laid off in January. Behind on rent by the time unemployment processed. Applied for emergency rental assistance — program closed. Applied for another — income too high by $200/month. Three programs had closed enrollment but were still listed as active on the county website.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Job loss · Eviction</span><span class="tag tag-sys">Ghost programs — listed active, already closed</span></div>
+      </div>
+      <div class="signal bad">
+        <div class="sig-top"><div class="av av1">CC</div><div><div class="sig-who">Community member</div><div class="sig-where">Central County · Jun 4</div></div></div>
+        <div class="sig-body">My son is experiencing homelessness and mental illness. His Medi-Cal was terminated so his medication ran out. He's decompensating. CARE team came once. Crisis line said they'd send someone. That was 11 days ago. I call every day. Nothing.</div>
+        <div class="tags"><span class="tag tag-geo">Central County</span><span class="tag tag-sit">Homelessness · Mental health</span><span class="tag tag-sys">CARE team — no follow up in 11 days</span><span class="tag tag-fed">Medicaid · Mental health services</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Community member</div><div class="sig-where">East County · Jun 8</div></div></div>
+        <div class="sig-body">My friend is experiencing psychosis and is unhoused. His Medi-Cal was terminated and without medication he can't maintain housing. County crisis team said he didn't meet threshold for involuntary hold. He's still outside. The crisis worker said their hands were tied. There's no middle option.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Homelessness · Health</span><span class="tag tag-sys">Crisis team — no middle option</span><span class="tag tag-fed">Medicaid / Medi-Cal</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av2">WC</div><div><div class="sig-who">Food pantry operator</div><div class="sig-where">West County · Jun 4</div></div></div>
+        <div class="sig-body">I run a food pantry in San Pablo. Monthly visits went from 180 to 340 families in six months. We're running out of food by the 3rd week of every month. We're supplementing with our own money. It's not sustainable.</div>
+        <div class="tags"><span class="tag tag-geo">West County</span><span class="tag tag-sit">Seeing more in community</span><span class="tag tag-fed">SNAP / CalFresh</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av3">EC</div><div><div class="sig-who">Librarian</div><div class="sig-where">East County · Jun 6</div></div></div>
+        <div class="sig-body">I'm a librarian in Brentwood. Our library has become a de facto day shelter. 20-30 people daily who have nowhere else to be. We don't have social workers or resources. People come because there's nowhere else.</div>
+        <div class="tags"><span class="tag tag-geo">East County</span><span class="tag tag-sit">Seeing more in community</span><span class="tag tag-sys">Library as shelter — not equipped</span></div>
+      </div>
+      <div class="signal warn">
+        <div class="sig-top"><div class="av av2">WC</div><div><div class="sig-who">Community member</div><div class="sig-where">West County · Jun 10</div></div></div>
+        <div class="sig-body">Everything fell apart at once in May. Eviction notice, CalFresh cut, husband lost job. Called 211 — 3 went to voicemail, 2 don't serve our zip, 2 closed intake, 1 put me on a waitlist. The 211 list felt like being handed a phone book and told to figure it out.</div>
+        <div class="tags"><span class="tag tag-geo">West County</span><span class="tag tag-sit">Eviction · Rent · Food</span><span class="tag tag-sys">211 — 8 agencies, none resolved</span><span class="tag tag-fed">SNAP · Rental assistance</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="lbl">Signal summary</div>
+        <div class="lrow"><span class="lrow-l">Total signals</span><span class="lrow-v">41</span></div>
+        <div class="lrow"><span class="lrow-l">West County</span><span class="lrow-v" style="color:var(--blue)">15</span></div>
+        <div class="lrow"><span class="lrow-l">East County</span><span class="lrow-v" style="color:#e8c4d8">14</span></div>
+        <div class="lrow"><span class="lrow-l">Central County</span><span class="lrow-v" style="color:#7ec8f5">9</span></div>
+        <div class="lrow"><span class="lrow-l">Unincorporated</span><span class="lrow-v" style="color:var(--dim)">3</span></div>
+        <div class="lrow"><span class="lrow-l">System worked</span><span class="lrow-v" style="color:var(--teal)">9</span></div>
+        <div class="lrow"><span class="lrow-l">System failed</span><span class="lrow-v" style="color:#ffd77a">19</span></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="lbl">Populations showing up</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Working people who can't afford housing</strong> — full-time workers earning too much for programs, not enough for rent.</div>
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Home-based and gig workers</strong> — nail techs, home health aides, cash workers without documentation the system requires.</div>
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Seniors on fixed income</strong> — rent increases absorbing 60–70% of Social Security. No fast-moving program exists for them.</div>
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Undocumented residents</strong> — immigration fear blocking access. Trust problem, not a resources problem.</div>
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Federal contractor workers</strong> — lost contracts due to DOGE cuts. No program designed for this situation.</div>
+          <div style="padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Veterans</strong> — aware VA programs exist; can't navigate them fast enough. No local expedited path.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl">Share the form</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px">41 signals in 10 days. Share this link to keep the picture building.</div>
+        <div style="padding:12px 14px;background:rgba(0,158,115,.06);border:1px solid rgba(0,158,115,.2);border-radius:10px;font-family:var(--ff-m);font-size:12px;color:var(--teal)">tally.so/forms/q4kQZg</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM RESPONSE -->
+<div id="systems" class="view" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">System response analysis</div>
+    <h1>When people tried to get help, <strong>what happened?</strong></h1>
+    <p>46% of respondents tried to access help and failed. Here's the breakdown — and what failed modes tell us about where the system breaks.</p>
+  </div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="lbl">Did you or someone you know try to get help?</div>
+      <div class="card-title" style="margin-bottom:14px">System <em>access outcomes</em></div>
+      <canvas id="ch_help" style="max-height:220px;margin-bottom:18px"></canvas>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,158,115,.06);border:1px solid rgba(0,158,115,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Got connected to something that helped</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:var(--teal)">9 (22%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Referred but it didn't work out</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:#ffd77a">7 (17%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(204,121,167,.06);border:1px solid rgba(204,121,167,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Called / went but couldn't get through</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:#e8c4d8">7 (17%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(0,114,178,.06);border:1px solid rgba(0,114,178,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Tried and stopped — didn't believe it would help</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:#7ec8f5">5 (12%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Didn't know where to go</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:var(--muted)">4 (10%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Haven't tried yet</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:var(--dim)">3 (7%)</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">When referrals didn't work — what went wrong</div>
+      <div class="card-title" style="margin-bottom:14px">Documented <em>failure modes</em></div>
+      <div class="brow"><span class="blab">Voicemail / disconnected</span><div class="btrack"><div class="bfill" style="width:100%;background:var(--rose)"></div></div><span class="bval">7</span></div>
+      <div class="brow"><span class="blab">Program full / out of funding</span><div class="btrack"><div class="bfill" style="width:57%;background:var(--amber)"></div></div><span class="bval">4</span></div>
+      <div class="brow"><span class="blab">Program listed but not available</span><div class="btrack"><div class="bfill" style="width:43%;background:var(--blue)"></div></div><span class="bval">3</span></div>
+      <div class="brow"><span class="blab">Required docs they didn't have</span><div class="btrack"><div class="bfill" style="width:43%;background:var(--navy)"></div></div><span class="bval">3</span></div>
+      <div class="brow"><span class="blab">Waitlist too long</span><div class="btrack"><div class="bfill" style="width:43%;background:var(--teal)"></div></div><span class="bval">3</span></div>
+      <div class="brow"><span class="blab">Worker helpful — nothing to offer</span><div class="btrack"><div class="bfill" style="width:14%;background:var(--dim)"></div></div><span class="bval">1</span></div>
+      <div style="margin-top:16px;padding:12px 14px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:10px;font-size:12px;color:#ffd77a;line-height:1.5">
+        <strong>Phone failure is the #1 documented barrier.</strong> 7 people couldn't get through — voicemail, hold, disconnect. This is infrastructure, not capacity. It's fixable.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="lbl">What this tells us about the system</div>
+    <div class="card-title" style="margin-bottom:14px">Three <em>policy-fixable</em> patterns</div>
+    <div class="g3">
+      <div style="padding:16px;background:rgba(204,121,167,.05);border:1px solid rgba(204,121,167,.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#e8c4d8">Ghost programs undermine trust</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">3 respondents applied to programs listed as active that had already closed enrollment. Every ghost program referral costs trust and energy from someone already in crisis. Program directories must be kept current in real time.</div>
+      </div>
+      <div style="padding:16px;background:rgba(230,159,0,.05);border:1px solid rgba(230,159,0,.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#ffd77a">Phone infrastructure is failing</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">7 people couldn't get through — voicemail, disconnections, holds over 40 minutes. A resident called 8 agencies; 3 went straight to voicemail. This is not a resource problem — it is a basic infrastructure problem that is costing people access to help they're entitled to.</div>
+      </div>
+      <div style="padding:16px;background:rgba(86,180,233,.05);border:1px solid rgba(86,180,233,.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--blue)">Human navigators are the unlock</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Of the 9 people who got help, nearly all credit a specific person — an outreach worker, a navigator, a tenant rights clinic staffer. The system alone isn't catching people. Funded, trusted, human navigation is the intervention with the strongest documented return in this dataset.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEDERAL CUTS -->
+<div id="federal" class="view" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">Federal policy impact · June 2026</div>
+    <h1>Washington decisions, <strong>Contra Costa lives</strong></h1>
+    <p>76% of respondents say recent federal cuts played a role — directly or probably. This is the first real-time community data connecting HR1 and related cuts to documented local outcomes.</p>
+  </div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="lbl">Did federal cuts play a role in this situation?</div>
+      <div class="card-title" style="margin-bottom:14px">Federal policy <em>connection</em></div>
+      <canvas id="ch_fed" style="max-height:200px;margin-bottom:16px"></canvas>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(204,121,167,.06);border:1px solid rgba(204,121,167,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Yes, directly — lost a specific benefit</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:#e8c4d8">19 (46%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Probably — things got harder around same time</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:#ffd77a">12 (29%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Doesn't seem connected</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:var(--dim)">6 (15%)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:8px">
+          <span style="font-size:12px;color:var(--muted)">Not sure</span>
+          <span style="font-family:var(--ff-d);font-weight:700;color:var(--dim)">4 (10%)</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">Which programs were affected</div>
+      <div class="card-title" style="margin-bottom:14px">Cut programs <em>hitting CCC</em></div>
+      <div class="brow"><span class="blab">SNAP / CalFresh food benefits</span><div class="btrack"><div class="bfill" style="width:100%;background:var(--amber)"></div></div><span class="bval">10</span></div>
+      <div class="brow"><span class="blab">Medicaid / Medi-Cal</span><div class="btrack"><div class="bfill" style="width:80%;background:var(--rose)"></div></div><span class="bval">8</span></div>
+      <div class="brow"><span class="blab">Section 8 / housing voucher</span><div class="btrack"><div class="bfill" style="width:40%;background:var(--blue)"></div></div><span class="bval">4</span></div>
+      <div class="brow"><span class="blab">Mental health / substance use</span><div class="btrack"><div class="bfill" style="width:30%;background:var(--teal)"></div></div><span class="bval">3</span></div>
+      <div class="brow"><span class="blab">Rental assistance program</span><div class="btrack"><div class="bfill" style="width:20%;background:var(--navy)"></div></div><span class="bval">2</span></div>
+      <div class="brow"><span class="blab">Other federal / state program</span><div class="btrack"><div class="bfill" style="width:20%;background:var(--dim)"></div></div><span class="bval">2</span></div>
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(230,159,0,.06);border:1px solid rgba(230,159,0,.15);border-radius:10px;font-size:12px;color:#ffd77a;line-height:1.5">
+        <strong>SNAP and Medi-Cal are the two most named programs.</strong> These cuts are hitting people simultaneously — the same household losing food benefits and health coverage at once.
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="lbl">What the community is telling us directly</div>
+      <div class="card-title" style="margin-bottom:14px">In their <em>own words</em></div>
+      <div class="qb amber">
+        <p>"My Medi-Cal got terminated in March. I'm diabetic and insulin costs $400 a month without coverage. I can't wait 3 months."</p>
+        <div class="qb-meta">East County · Jun 1 · Medi-Cal cut · Direct</div>
+      </div>
+      <div class="qb rose">
+        <p>"Our Section 8 voucher was terminated in April. We've been on the waitlist 6 years and finally got it two years ago. Now it's gone. I have three kids."</p>
+        <div class="qb-meta">East County · Jun 1 · Section 8 terminated · Direct</div>
+      </div>
+      <div class="qb">
+        <p>"I was a home health aide. My client's Medi-Cal was cut so they couldn't afford my services. I lost my job. Applied for unemployment — employer misclassified me."</p>
+        <div class="qb-meta">West County · Jun 5 · Medi-Cal + SNAP · Cascading loss</div>
+      </div>
+      <div class="qb blue">
+        <p>"I was a federal contractor. My contract was terminated when the agency had its budget cut. Job searching for 4 months. About to miss my second rent payment."</p>
+        <div class="qb-meta">Central County · Jun 7 · Federal contractor · DOGE cuts</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">Policy context</div>
+      <div class="card-title" style="margin-bottom:14px">What's behind these <em>signals</em></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="padding:14px;background:rgba(204,121,167,.05);border:1px solid rgba(204,121,167,.15);border-radius:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px;color:#e8c4d8">HR1 — signed July 4, 2025</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">$911B Medicaid cut over 10 years. New SNAP work requirements. $939M HUD housing cut in FY26. The community is feeling these cuts now, months before they appear in official data.</div>
+        </div>
+        <div style="padding:14px;background:rgba(230,159,0,.05);border:1px solid rgba(230,159,0,.15);border-radius:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px;color:#ffd77a">Medi-Cal redetermination wave</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">October 2026 wave is approaching. These June signals are the leading indicator. The official data will confirm what residents are already experiencing — 12 to 18 months from now.</div>
+        </div>
+        <div style="padding:14px;background:rgba(86,180,233,.05);border:1px solid rgba(86,180,233,.15);border-radius:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px;color:var(--blue)">This map closes the data lag</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">By the time HMIS and CalFresh enrollment data confirm the impact, the damage will be 18 months old. These 41 signals are real-time. They are the early warning system.  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="view" role="tabpanel">
+  <div class="ph">
+    <div class="eyebrow">About this tool</div>
+    <h1>Built for <strong>the community, not the county</strong></h1>
+    <p>Anonymous, accessible, and designed for the people closest to what's happening in Contra Costa County. Not an application. Not a data request. A map of what's actually happening.</p>
+  </div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="lbl">What the form asks</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:10px">
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>1.</strong> Which part of CCC are you in?</div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>2.</strong> What's the situation? <span style="color:var(--dim)">(select all that apply)</span></div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>3.</strong> Did you or someone you know try to get help?</div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>4.</strong> If a referral didn't work out, what went wrong?</div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>5.</strong> In your own words, what's happening? <span style="color:var(--dim)">(optional)</span></div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>6.</strong> Did federal cuts play a role?</div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>7.</strong> Which programs were affected? <span style="color:var(--dim)">(if applicable)</span></div>
+        <div style="padding:10px 14px;background:var(--glass);border:1px solid var(--rim);border-radius:10px;font-size:13px"><strong>8.</strong> Better, worse, or about the same vs. 6 months ago?</div>
+      </div>
+      <div style="margin-top:16px">
+        <a href="https://tally.so/forms/q4kQZg" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:var(--teal);color:#fff;border-radius:10px;font-size:13px;font-weight:600">→ Open the community form</a>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="lbl">Privacy</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7">Responses are anonymous by default and will never be shared with county agencies without explicit permission. No name, case number, or identifying information is required.</p>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="lbl">What this produces</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div style="display:flex;gap:10px;padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px"><span style="color:var(--teal);flex-shrink:0">→</span><div style="font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Real-time community dashboard</strong> — this page, updated as signals come in</div></div>
+          <div style="display:flex;gap:10px;padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px"><span style="color:var(--teal);flex-shrink:0">→</span><div style="font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Monthly signal briefs</strong> — for county leaders, funders, and community partners</div></div>
+          <div style="display:flex;gap:10px;padding:10px 12px;background:var(--glass);border:1px solid var(--rim);border-radius:10px"><span style="color:var(--teal);flex-shrink:0">→</span><div style="font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Federal impact tracker</strong> — connecting policy changes to documented community outcomes</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl">Data pipeline</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7">Form submissions flow to Google Sheets via Tally integration (loren@dalbert.design). Export as TSV and paste into the dashboard to update all charts and counts.</p>
+      </div>
+    </div>
+  </div>
+  <div class="qb">
+    <p>"This isn't a service application. There's no wrong answer. We're building a real-time picture of what's happening in Contra Costa County — told by the people living it, not just the people counting it."</p>
+    <div class="qb-meta">Community Service Map · Form introduction</div>
+  </div>
+  <div class="foot">
+    <p>Community Service Map · Contra Costa County · 41 signals · June 2026<br>Tally · Google Sheets · Updated as signals come in</p>
+    <div class="dd">A DALBERT DESIGN SERVICE</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  const ids=['overview','signals','systems','federal','about'];
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    const active=ids[i]===id;
+    b.classList.toggle('on',active);
+    b.setAttribute('aria-selected',String(active));
+  });
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+const dark='#8a9fc0';
+const baseOpts={responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:dark,font:{size:11},padding:10,usePointStyle:true,pointStyleWidth:8}}}};
+
+new Chart(document.getElementById('ch_trend'),{
+  type:'doughnut',
+  data:{
+    labels:['Much worse (31)','Somewhat worse (7)','About the same (3)'],
+    datasets:[{data:[31,7,3],backgroundColor:['#CC79A7','#E69F00','#6a7a9a'],borderWidth:0,borderRadius:3,spacing:2}]
+  },
+  options:{...baseOpts,cutout:'62%',plugins:{...baseOpts.plugins,legend:{...baseOpts.plugins.legend,position:'right'}}}
+});
+
+new Chart(document.getElementById('ch_who'),{
+  type:'doughnut',
+  data:{
+    labels:['Personal experience','Service worker / observer','Someone I know','Seeing in community'],
+    datasets:[{data:[22,9,6,4],backgroundColor:['#009E73','#56B4E9','#E69F00','#CC79A7'],borderWidth:0,borderRadius:3,spacing:2}]
+  },
+  options:{...baseOpts,cutout:'60%',plugins:{...baseOpts.plugins,legend:{...baseOpts.plugins.legend,position:'right'}}}
+});
+
+new Chart(document.getElementById('ch_help'),{
+  type:'bar',
+  data:{
+    labels:['Got help','Referral failed','Couldn\'t reach','Gave up','Didn\'t know','Haven\'t tried'],
+    datasets:[{data:[9,7,7,5,4,3],backgroundColor:['#009E73','#E69F00','#CC79A7','#CC79A7','#0072B2','#6a7a9a'],borderRadius:5,borderSkipped:false}]
+  },
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:dark,font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:dark,font:{size:11},stepSize:2},grid:{color:'rgba(255,255,255,.05)'},border:{display:false}}}}
+});
+
+new Chart(document.getElementById('ch_fed'),{
+  type:'doughnut',
+  data:{
+    labels:['Yes, directly (19)','Probably (12)',"Doesn't seem connected (6)",'Not sure (4)'],
+    datasets:[{data:[19,12,6,4],backgroundColor:['#CC79A7','#E69F00','#009E73','#6a7a9a'],borderWidth:0,borderRadius:3,spacing:2}]
+  },
+  options:{...baseOpts,cutout:'62%',plugins:{...baseOpts.plugins,legend:{...baseOpts.plugins.legend,position:'right'}}}
+});
+</script>
+</body>
+</html>
